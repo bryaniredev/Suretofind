@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Suretofind — Find your next career bearing</title>
+<meta name="description" content="A short questionnaire that matches your interests and abilities to today's most in-demand jobs." />
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40" width="22" height="22">
+          <circle cx="20" cy="20" r="18" fill="none" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M20 8 L23 20 L20 32 L17 20 Z" fill="currentColor"/>
+        </svg>
+      </span>
+      Suretofind
+    </div>
+    <span class="topbar-sub">career bearings, from real 2026 labor-market data</span>
+  </header>
+
+  <main>
+
+    <!-- INTRO -->
+    <section id="screen-intro" class="screen active intro-screen">
+      <div class="compass-hero" aria-hidden="true">
+        <svg viewBox="0 0 240 240" class="compass-svg">
+          <circle cx="120" cy="120" r="108" class="compass-ring-outer"/>
+          <circle cx="120" cy="120" r="86" class="compass-ring-inner"/>
+          <g class="compass-ticks">
+            <!-- 24 ticks -->
+          </g>
+          <text x="120" y="26" class="compass-dir" text-anchor="middle">N</text>
+          <text x="120" y="222" class="compass-dir" text-anchor="middle">S</text>
+          <text x="20" y="125" class="compass-dir" text-anchor="middle">W</text>
+          <text x="220" y="125" class="compass-dir" text-anchor="middle">E</text>
+          <g id="compass-needle" class="compass-needle" style="transform-origin: 120px 120px;">
+            <path d="M120 46 L131 120 L120 146 L109 120 Z" class="needle-north"/>
+            <path d="M120 194 L131 120 L120 94 L109 120 Z" class="needle-south"/>
+          </g>
+          <circle cx="120" cy="120" r="6" class="compass-pivot"/>
+        </svg>
+      </div>
+
+      <p class="eyebrow">36 questions · about 4 minutes</p>
+      <h1 class="hero-title">Find where<br/>you're headed.</h1>
+      <p class="hero-sub">
+        Answer honestly about how you like to work, and we'll chart it against
+        30 of the fastest-growing, most in-demand jobs right now — spanning AI,
+        healthcare, skilled trades, and more — sourced from BLS, LinkedIn, and
+        WEF labor-market data.
+      </p>
+      <button id="start-btn" class="btn-primary">Take your bearing</button>
+      <p class="hero-foot">No sign-up. Nothing saved. Just your results.</p>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="screen-quiz" class="screen quiz-screen">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <p class="progress-label" id="progress-label">1 / 30</p>
+
+      <div id="question-wrap" class="question-wrap"></div>
+
+      <button id="back-btn" class="btn-ghost" type="button">&larr; Back</button>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="screen-results" class="screen results-screen">
+      <p class="eyebrow">Your results</p>
+      <h1 class="results-title">Your bearings</h1>
+      <p id="top-trait-label" class="top-trait"></p>
+
+      <div id="results-hex" class="results-hex" aria-hidden="true"></div>
+
+      <h2 class="matches-heading">Your top job matches</h2>
+      <div id="match-list" class="match-list"></div>
+
+      <button id="retake-btn" class="btn-ghost retake-btn" type="button">Retake the questionnaire</button>
+
+      <footer class="site-footer">
+        <p>Job data compiled from the U.S. Bureau of Labor Statistics Occupational Outlook Handbook (2024–2034 projections), LinkedIn "Jobs on the Rise" 2026, and the World Economic Forum Future of Jobs Report 2025. Matching is based on Holland's RIASEC interest model. Figures are US-national estimates and change over time — treat results as a starting point for research, not a guarantee.</p>
+      </footer>
+    </section>
+
+  </main>
+
+  <script src="jobs-data.js"></script>
+  <script src="questions-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
