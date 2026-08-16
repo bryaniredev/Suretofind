@@ -8,7 +8,21 @@
   const ALL_QUESTIONS = [...RIASEC_QUESTIONS, ...LIFESTYLE_QUESTIONS];
   const TOTAL = ALL_QUESTIONS.length;
 
+  const MARKETS = {
+    us: {
+      label: "US",
+      jobs: JOBS,
+      footer: "Job data compiled from the U.S. Bureau of Labor Statistics Occupational Outlook Handbook (2024–2034 projections), LinkedIn \"Jobs on the Rise\" 2026, and the World Economic Forum Future of Jobs Report 2025. Matching is based on Holland's RIASEC interest model. Figures are US-national estimates and change over time — treat results as a starting point for research, not a guarantee."
+    },
+    ie: {
+      label: "Ireland",
+      jobs: JOBS_IE,
+      footer: "Job data compiled from Ireland's Critical Skills Occupations List 2026 (Department of Enterprise, Tourism and Employment), the CSO Labour Force Survey, the Morgan McKinley Ireland Salary Guide 2026, the Expert Group on Future Skills Needs (EGFSN), and sector salary guides from Excel Recruitment and Fáilte Ireland. Matching is based on Holland's RIASEC interest model. Figures are Ireland-national estimates and change over time — treat results as a starting point for research, not a guarantee."
+    }
+  };
+
   const state = {
+    market: "us",
     index: 0,
     likertAnswers: {},   // question index -> value 1-5
     lifestyleAnswers: {} // key -> value
@@ -21,7 +35,7 @@
   };
 
   const els = {
-    startBtn: document.getElementById("start-btn"),
+    marketBtns: document.querySelectorAll(".btn-market"),
     retakeBtn: document.getElementById("retake-btn"),
     progressFill: document.getElementById("progress-fill"),
     progressLabel: document.getElementById("progress-label"),
@@ -31,6 +45,8 @@
     resultsNeedleGroup: document.getElementById("results-hex"),
     matchList: document.getElementById("match-list"),
     topTraitLabel: document.getElementById("top-trait-label"),
+    matchesHeading: document.getElementById("matches-heading"),
+    footerDisclaimer: document.getElementById("footer-disclaimer"),
   };
 
   function showScreen(name) {
@@ -40,10 +56,13 @@
 
   // ---------- Navigation ----------
 
-  els.startBtn.addEventListener("click", () => {
-    state.index = 0;
-    showScreen("quiz");
-    renderQuestion();
+  els.marketBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.market = btn.dataset.market;
+      state.index = 0;
+      showScreen("quiz");
+      renderQuestion();
+    });
   });
 
   els.retakeBtn.addEventListener("click", () => {
@@ -230,8 +249,9 @@
 
   function computeAndShowResults() {
     const profile = computeRiasecProfile();
+    const market = MARKETS[state.market];
 
-    const scored = JOBS.map((job) => {
+    const scored = market.jobs.map((job) => {
       const interestScore = cosineSim(profile, job.riasec); // 0..1
       const lifestyleScore = lifestyleAlignment(job); // 0..1
       const finalScore = interestScore * 0.68 + lifestyleScore * 0.32;
@@ -239,6 +259,13 @@
     });
 
     scored.sort((x, y) => y.finalScore - x.finalScore);
+
+    if (els.matchesHeading) {
+      els.matchesHeading.textContent = `Your top ${market.label} job matches`;
+    }
+    if (els.footerDisclaimer) {
+      els.footerDisclaimer.textContent = market.footer;
+    }
 
     renderResults(profile, scored.slice(0, 6));
     showScreen("results");

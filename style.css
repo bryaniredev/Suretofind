@@ -154,6 +154,53 @@ main {
   margin-top: 14px;
 }
 
+/* ---------- Market select ---------- */
+
+.market-eyebrow { margin-top: 8px; }
+
+.market-select {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 420px;
+  margin: 0 auto 8px;
+}
+
+.btn-market {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-family: var(--font-body);
+  padding: 16px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, transform 140ms ease;
+}
+.btn-market:hover { border-color: var(--accent-dim); background: var(--surface-2); transform: translateY(-2px); }
+.btn-market:active { transform: translateY(0); }
+
+.market-flag { font-size: 1.7rem; line-height: 1; flex: none; }
+
+.market-body { display: flex; flex-direction: column; gap: 2px; }
+
+.market-label {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.05rem;
+}
+
+.market-sub {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--muted-2);
+  letter-spacing: 0.03em;
+}
+
 /* ---------- Buttons ---------- */
 
 .btn-primary {
