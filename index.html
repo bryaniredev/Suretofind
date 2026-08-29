@@ -49,15 +49,39 @@
         </svg>
       </div>
 
-      <p class="eyebrow">36 questions · about 4 minutes</p>
+      <p class="eyebrow">Quick questions · results in minutes</p>
       <h1 class="hero-title">Find where<br/>you're headed.</h1>
       <p class="hero-sub">
         Answer honestly about how you like to work, and we'll chart it against
-        30 of the fastest-growing, most in-demand jobs right now — spanning AI,
-        healthcare, skilled trades, and more — sourced from BLS, LinkedIn, and
-        WEF labor-market data.
+        the fastest-growing, most in-demand jobs right now — spanning AI,
+        healthcare, skilled trades, and more — sourced from official
+        labor-market data.
       </p>
-      <button id="start-btn" class="btn-primary">Take your bearing</button>
+
+      <p class="eyebrow market-eyebrow">Choose your job market</p>
+      <div class="market-select">
+        <button type="button" class="btn-market" id="market-us" data-market="us">
+          <span class="market-flag" aria-hidden="true">🇺🇸</span>
+          <span class="market-body">
+            <span class="market-label">United States</span>
+            <span class="market-sub">BLS · LinkedIn · WEF data</span>
+          </span>
+        </button>
+        <button type="button" class="btn-market" id="market-ie" data-market="ie">
+          <span class="market-flag" aria-hidden="true">🇮🇪</span>
+          <span class="market-body">
+            <span class="market-label">Ireland</span>
+            <span class="market-sub">CSO · Critical Skills List · Morgan McKinley data</span>
+          </span>
+        </button>
+        <button type="button" class="btn-market" id="market-ie2026" data-market="ie2026">
+          <span class="market-flag" aria-hidden="true">🇮🇪🎓</span>
+          <span class="market-body">
+            <span class="market-label">Ireland 2026/27</span>
+            <span class="market-sub">SOLAS · CSOL · CAO · Apprenticeship.ie — for students</span>
+          </span>
+        </button>
+      </div>
       <p class="hero-foot">No sign-up. Nothing saved. Just your results.</p>
     </section>
 
@@ -81,20 +105,23 @@
 
       <div id="results-hex" class="results-hex" aria-hidden="true"></div>
 
-      <h2 class="matches-heading">Your top job matches</h2>
+      <h2 id="matches-heading" class="matches-heading">Your top job matches</h2>
       <div id="match-list" class="match-list"></div>
 
       <button id="retake-btn" class="btn-ghost retake-btn" type="button">Retake the questionnaire</button>
 
       <footer class="site-footer">
-        <p>Job data compiled from the U.S. Bureau of Labor Statistics Occupational Outlook Handbook (2024–2034 projections), LinkedIn "Jobs on the Rise" 2026, and the World Economic Forum Future of Jobs Report 2025. Matching is based on Holland's RIASEC interest model. Figures are US-national estimates and change over time — treat results as a starting point for research, not a guarantee.</p>
+        <p id="footer-disclaimer">Job data compiled from the U.S. Bureau of Labor Statistics Occupational Outlook Handbook (2024–2034 projections), LinkedIn "Jobs on the Rise" 2026, and the World Economic Forum Future of Jobs Report 2025. Matching is based on Holland's RIASEC interest model. Figures are US-national estimates and change over time — treat results as a starting point for research, not a guarantee.</p>
       </footer>
     </section>
 
   </main>
 
   <script src="jobs-data.js"></script>
+  <script src="jobs-data-ie.js"></script>
+  <script src="jobs-data-ie2026.js"></script>
   <script src="questions-data.js"></script>
+  <script src="questions-data-ie2026.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
