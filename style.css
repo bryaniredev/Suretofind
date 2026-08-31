@@ -320,6 +320,50 @@ main {
 .choice-btn:hover { border-color: var(--accent-dim); background: var(--surface-2); transform: translateX(2px); }
 .choice-btn.selected { border-color: var(--accent); background: var(--surface-2); }
 
+/* ---------- Multiselect (subject picker, hobbies) ---------- */
+
+.multiselect-hint {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted-2);
+  margin: -20px 0 24px;
+}
+
+.multiselect-wrap { margin-bottom: 8px; }
+
+.multiselect-group {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  margin: 22px 0 10px;
+}
+.multiselect-group:first-of-type { margin-top: 0; }
+
+.multiselect-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.multiselect-btn {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 9px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+.multiselect-btn:hover { border-color: var(--accent-dim); background: var(--surface-2); }
+.multiselect-btn.selected { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+
+.multiselect-continue { display: block; margin: 28px auto 0; }
+
 /* ---------- Results ---------- */
 
 .results-screen { padding-top: clamp(28px, 6vh, 48px); }

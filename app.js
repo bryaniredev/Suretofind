@@ -6,9 +6,17 @@
   "use strict";
 
   const QUESTIONS_STANDARD = [...RIASEC_QUESTIONS, ...LIFESTYLE_QUESTIONS];
+  // Ireland 2026/27 starts with a fixed base — RIASEC, then "which
+  // cycle are you in?", then the subject picker (its own catalog of
+  // options resolves at render time from the cycle answer) — and the
+  // subject-enjoyment questions for whatever was picked get spliced
+  // in right after the picker once it's answered. See continueMultiselect()
+  // and handleAnswered() below.
   const QUESTIONS_IE2026 = [
     ...RIASEC_QUESTIONS,
-    ...SUBJECT_QUESTIONS_IE2026,
+    ...CYCLE_QUESTION_IE2026,
+    SUBJECT_PICKER_QUESTION_IE2026,
+    ...HOBBY_QUESTION_IE2026,
     ...LIFESTYLE_QUESTIONS_IE2026,
     ...PATHWAY_QUESTION_IE2026,
   ];
@@ -30,7 +38,7 @@
       label: "Ireland 2026/27",
       jobs: JOBS_IE_2026,
       questions: QUESTIONS_IE2026,
-      footer: "Job data compiled from the SOLAS National Skills Bulletin 2025, Ireland's Critical Skills Occupations List (DETE, effective 13 May 2026), the EGFSN's Skills for Biopharma and Skills for Zero Carbon reports, the Fáilte Ireland Tourism Careers Research 2025 Update, the Build Up Skills Ireland 2030 report, apprenticeship.ie/National Apprenticeship Office data, 2025/2026 CAO points, and public pay scales (HSE, ASTI, An Garda Síochána). Salary figures from recruitment/aggregator sources are indicative and Dublin-weighted; CAO points change yearly. Matching combines Holland's RIASEC interest model with Leaving Cert subject enjoyment and your preferred after-school pathway — treat your results as exploration anchors for further research with a guidance counsellor, not a verdict."
+      footer: "Job data compiled from the SOLAS National Skills Bulletin 2025, Ireland's Critical Skills Occupations List (DETE, effective 13 May 2026), the EGFSN's Skills for Biopharma and Skills for Zero Carbon reports, the Fáilte Ireland Tourism Careers Research 2025 Update, the Build Up Skills Ireland 2030 report, apprenticeship.ie/National Apprenticeship Office data, 2025/2026 CAO points, and public pay scales (HSE, ASTI, An Garda Síochána). Subjects are drawn from NCCA's Junior Cycle and Leaving Certificate subject lists (2025/26); hobbies are a light extra signal, not a job filter. Matching combines Holland's RIASEC interest model with Leaving Cert/Junior Cycle subject enjoyment, your hobbies, and your preferred after-school pathway — treat your results as exploration anchors for further research with a guidance counsellor, not a verdict."
     }
   };
 
@@ -39,8 +47,9 @@
     questions: MARKETS.us.questions,
     total: MARKETS.us.questions.length,
     index: 0,
+    insertedSubjectCount: 0, // how many dynamically-built subject questions are currently spliced in
     likertAnswers: {},   // question index -> value 1-5
-    lifestyleAnswers: {} // key -> value
+    lifestyleAnswers: {} // key -> value (also holds multiselect answers as arrays)
   };
 
   const screens = {
@@ -74,9 +83,14 @@
   els.marketBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       state.market = btn.dataset.market;
-      state.questions = MARKETS[state.market].questions;
+      // Copy the base array — Ireland 2026/27 splices questions in and
+      // out as it's answered, and that must never mutate the shared
+      // MARKETS[...].questions array itself (or a retake would reuse
+      // whatever got spliced during the previous attempt).
+      state.questions = [...MARKETS[state.market].questions];
       state.total = state.questions.length;
       state.index = 0;
+      state.insertedSubjectCount = 0;
       state.likertAnswers = {};
       state.lifestyleAnswers = {};
       showScreen("quiz");
@@ -120,8 +134,14 @@
 
     const heading = document.createElement("h2");
     heading.className = "question-text";
-    heading.textContent = q.text;
+    heading.textContent = q.dynamicCatalog ? subjectPickerHeading() : q.text;
     els.questionWrap.appendChild(heading);
+
+    if (q.type === "multiselect") {
+      renderMultiselectQuestion(q);
+      nudgeCompass();
+      return;
+    }
 
     const optionsWrap = document.createElement("div");
     optionsWrap.className = q.type === "likert" ? "likert-row" : "choice-list";
@@ -148,6 +168,7 @@
         btn.textContent = opt.label;
         btn.addEventListener("click", () => {
           state.lifestyleAnswers[q.key] = opt.value;
+          handleAnswered(q);
           setTimeout(goNext, 180);
         });
         optionsWrap.appendChild(btn);
@@ -156,6 +177,123 @@
 
     els.questionWrap.appendChild(optionsWrap);
     nudgeCompass();
+  }
+
+  function subjectPickerHeading() {
+    return state.lifestyleAnswers.cycle === "junior"
+      ? "Pick the Junior Cycle subjects you're taking this year."
+      : "Pick the Leaving Cert subjects you're taking this year.";
+  }
+
+  // Renders a grouped (or flat, if options carry no .group) chip list
+  // plus a Continue button — multiselect questions don't auto-advance
+  // like likert/choice ones, since the user needs to pick several.
+  function renderMultiselectQuestion(q) {
+    const options = q.dynamicCatalog ? catalogForCycle(state.lifestyleAnswers.cycle) : q.options;
+    const selected = new Set(state.lifestyleAnswers[q.key] || []);
+
+    if (q.hint) {
+      const hint = document.createElement("p");
+      hint.className = "multiselect-hint";
+      hint.textContent = q.hint;
+      els.questionWrap.appendChild(hint);
+    }
+
+    const wrap = document.createElement("div");
+    wrap.className = "multiselect-wrap";
+
+    let currentGroup;
+    let groupList;
+    options.forEach((opt) => {
+      if (opt.group !== currentGroup) {
+        currentGroup = opt.group;
+        const groupHeading = document.createElement("p");
+        groupHeading.className = "multiselect-group";
+        groupHeading.textContent = currentGroup;
+        wrap.appendChild(groupHeading);
+        groupList = document.createElement("div");
+        groupList.className = "multiselect-list";
+        wrap.appendChild(groupList);
+      } else if (!groupList) {
+        groupList = document.createElement("div");
+        groupList.className = "multiselect-list";
+        wrap.appendChild(groupList);
+      }
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "multiselect-btn" + (selected.has(opt.id) ? " selected" : "");
+      btn.textContent = opt.label;
+      btn.addEventListener("click", () => {
+        if (selected.has(opt.id)) {
+          selected.delete(opt.id);
+        } else {
+          selected.add(opt.id);
+        }
+        btn.classList.toggle("selected");
+      });
+      groupList.appendChild(btn);
+    });
+
+    els.questionWrap.appendChild(wrap);
+
+    const continueBtn = document.createElement("button");
+    continueBtn.type = "button";
+    continueBtn.className = "btn-primary multiselect-continue";
+    continueBtn.textContent = "Continue";
+    continueBtn.addEventListener("click", () => {
+      continueMultiselect(q, Array.from(selected));
+    });
+    els.questionWrap.appendChild(continueBtn);
+  }
+
+  // Side effects that run right after a choice question is answered.
+  // Ireland 2026/27's "cycle" question controls whether the subject
+  // picker even appears next.
+  function handleAnswered(q) {
+    if (state.market !== "ie2026" || q.key !== "cycle") return;
+
+    const cycle = state.lifestyleAnswers.cycle;
+    const pickerIndex = state.index + 1;
+    const hasPicker = state.questions[pickerIndex] === SUBJECT_PICKER_QUESTION_IE2026;
+
+    if (cycle === "none") {
+      if (hasPicker) {
+        state.questions.splice(pickerIndex, 1);
+        state.total -= 1;
+      }
+      if (state.insertedSubjectCount > 0) {
+        state.questions.splice(pickerIndex, state.insertedSubjectCount);
+        state.total -= state.insertedSubjectCount;
+        state.insertedSubjectCount = 0;
+      }
+    } else if (!hasPicker) {
+      state.questions.splice(pickerIndex, 0, SUBJECT_PICKER_QUESTION_IE2026);
+      state.total += 1;
+    }
+  }
+
+  // Handles a multiselect's Continue click: records the selection, and
+  // for the subject picker specifically, (re)builds and splices in the
+  // matching subject-enjoyment questions right after it.
+  function continueMultiselect(q, selectedIds) {
+    state.lifestyleAnswers[q.key] = selectedIds;
+
+    if (q.key === "subjects") {
+      const removed = state.insertedSubjectCount || 0;
+      if (removed > 0) {
+        state.questions.splice(state.index + 1, removed);
+        state.total -= removed;
+      }
+      const newQuestions = buildSubjectQuestions(state.lifestyleAnswers.cycle, selectedIds);
+      if (newQuestions.length) {
+        state.questions.splice(state.index + 1, 0, ...newQuestions);
+        state.total += newQuestions.length;
+      }
+      state.insertedSubjectCount = newQuestions.length;
+    }
+
+    goNext();
   }
 
   function nudgeCompass() {
@@ -198,6 +336,8 @@
     geography: "Geography",
     history: "History",
     languages: "Modern Languages",
+    music: "Music",
+    pe: "Physical Education",
   };
 
   const PATHWAY_LABELS = {
@@ -236,16 +376,20 @@
     return dot / (Math.sqrt(magU) * Math.sqrt(magJ));
   }
 
-  // Leaving Cert subject-enjoyment profile — only populated on markets
-  // whose question set includes SUBJECT_QUESTIONS_IE2026 items (identified
-  // generically by the presence of q.subject, so this doesn't need to know
-  // about any particular market).
+  // Subject-enjoyment profile — built from whichever dynamically-generated
+  // subject questions ended up in state.questions (identified generically
+  // by the presence of q.subjectKeys, so this doesn't need to know which
+  // specific subjects were picked). Empty for a student not currently in
+  // school, or on markets that don't ask about subjects at all.
   function computeSubjectProfile() {
     const profile = {};
     state.questions.forEach((q, i) => {
-      if (q.type === "likert" && q.subject) {
+      if (q.type === "likert" && q.subjectKeys) {
         const val = state.likertAnswers[i] || 3;
-        profile[q.subject] = (val - 1) / 4; // normalize to 0..1
+        const norm = (val - 1) / 4; // normalize to 0..1
+        q.subjectKeys.forEach((key) => {
+          profile[key] = norm;
+        });
       }
     });
     return profile;
@@ -255,6 +399,28 @@
     if (!job.subjects || !job.subjects.length) return 0.7;
     const vals = job.subjects.map((s) => (s in subjectProfile ? subjectProfile[s] : 0.6));
     return vals.reduce((sum, v) => sum + v, 0) / vals.length;
+  }
+
+  // Hobby profile — a light extra signal blended alongside RIASEC
+  // interest, not a standalone job filter. Returns null when the
+  // student picked no hobbies, so callers can fall back to a neutral
+  // score that doesn't distort the ranking.
+  function computeHobbyProfile() {
+    const selected = state.lifestyleAnswers.hobbies || [];
+    if (!selected.length) return null;
+
+    const profile = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+    selected.forEach((id) => {
+      const vec = HOBBY_RIASEC_IE2026[id];
+      if (!vec) return;
+      TRAITS.forEach((t) => {
+        profile[t] += vec[t] || 0;
+      });
+    });
+    TRAITS.forEach((t) => {
+      profile[t] = profile[t] / selected.length;
+    });
+    return profile;
   }
 
   function lifestyleAlignment(job) {
@@ -330,7 +496,9 @@
   function computeAndShowResults() {
     const profile = computeRiasecProfile();
     const market = MARKETS[state.market];
-    const subjectProfile = state.market === "ie2026" ? computeSubjectProfile() : null;
+    const isIe2026 = state.market === "ie2026";
+    const subjectProfile = isIe2026 ? computeSubjectProfile() : null;
+    const hobbyProfile = isIe2026 ? computeHobbyProfile() : null;
 
     const scored = market.jobs.map((job) => {
       const interestScore = cosineSim(profile, job.riasec); // 0..1
@@ -338,7 +506,10 @@
       let finalScore;
       if (subjectProfile) {
         const subjectScore = subjectAlignment(job, subjectProfile); // 0..1
-        finalScore = interestScore * 0.5 + subjectScore * 0.2 + lifestyleScore * 0.3;
+        // A neutral 0.65 keeps every job's score equally unaffected when
+        // no hobbies were picked, rather than distorting the ranking.
+        const hobbyScore = hobbyProfile ? cosineSim(hobbyProfile, job.riasec) : 0.65;
+        finalScore = interestScore * 0.45 + subjectScore * 0.2 + hobbyScore * 0.1 + lifestyleScore * 0.25;
       } else {
         finalScore = interestScore * 0.68 + lifestyleScore * 0.32;
       }
