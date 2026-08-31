@@ -27,25 +27,52 @@ most in-demand jobs — no sign-up, nothing stored, just your results.
      Salary Guide 2026, the Expert Group on Future Skills Needs (EGFSN), and
      sector salary guides from Excel Recruitment and Fáilte Ireland.
    - **Ireland 2026/27** (27 jobs) — a version built for Irish secondary
-     students, adding 18 Leaving Cert subject-enjoyment questions and an
-     after-school pathway preference (CAO degree / apprenticeship / PLC /
-     open to any) alongside RIASEC. Compiled from the SOLAS National Skills
-     Bulletin 2025, Ireland's Critical Skills Occupations List (CSOL, DETE,
-     effective 13 May 2026), the EGFSN's *Skills for Biopharma* and *Skills
-     for Zero Carbon* reports, the Fáilte Ireland Tourism Careers Research
-     2025 Update, the Build Up Skills Ireland 2030 report, apprenticeship.ie
-     / the National Apprenticeship Office, 2025/2026 CAO points, and public
-     pay scales (HSE, ASTI, An Garda Síochána). Every job lists its CAO
-     points and/or apprenticeship route, NFQ level, and the Leaving Cert
-     subjects it draws on, so results double as subject-choice guidance.
+     students, adapting to the real Junior Cycle and Leaving Certificate
+     subject lists and adding a hobbies signal alongside RIASEC. Compiled
+     from the SOLAS National Skills Bulletin 2025, Ireland's Critical Skills
+     Occupations List (CSOL, DETE, effective 13 May 2026), the EGFSN's
+     *Skills for Biopharma* and *Skills for Zero Carbon* reports, the Fáilte
+     Ireland Tourism Careers Research 2025 Update, the Build Up Skills
+     Ireland 2030 report, apprenticeship.ie / the National Apprenticeship
+     Office, 2025/2026 CAO points, and public pay scales (HSE, ASTI, An
+     Garda Síochána). Every job lists its CAO points and/or apprenticeship
+     route, NFQ level, and the Leaving Cert/Junior Cycle subjects it draws
+     on, so results double as subject-choice guidance.
 5. You get your top 6 matches, each with salary range, education/pathway
    path, growth outlook, and key skills.
 
+### The Ireland 2026/27 flow, in detail
+
+Rather than asking about a fixed list of subjects, this edition adapts to
+each student:
+
+1. **"Which stage of school are you in?"** — Junior Cycle, Senior Cycle, or
+   not currently in school.
+2. **Pick your subjects** — a multi-select drawn from NCCA's real 2025/26
+   subject lists (Curriculum Online): the 15 optional Junior Cycle subjects,
+   or all ~39 optional Leaving Certificate (Established) subjects (including
+   the new Senior Cycle Redevelopment Tranche 1 subjects, Climate Action and
+   Sustainable Development and Drama, Film and Theatre Studies), grouped the
+   way the source lists group them. Short courses and the separate LCVP/LCA
+   course lists are out of scope. Someone not in school skips this step
+   entirely.
+3. **Rate how much you enjoy exactly what you picked** — plus Irish,
+   English, and Maths, the de facto core subjects almost everyone takes.
+   These enjoyment questions are generated on the fly from your selection,
+   not asked as one fixed list.
+4. **Pick your hobbies** — a multi-select of activities popular with Irish
+   teens (GAA/team sports, gaming, content creation, music, art, reading,
+   coding, part-time work, volunteering, debating, cooking, fashion,
+   outdoors, animals, strategy games, and more), used as a light extra
+   signal on top of your RIASEC interest score.
+5. The usual lifestyle questions, plus an after-school pathway preference
+   (CAO degree / apprenticeship / PLC / open to any).
+
 Matching for the US and Ireland editions combines a cosine-similarity score
 across the six RIASEC dimensions (68%) with a lifestyle-alignment score
-(32%). The Ireland 2026/27 edition reweights this to RIASEC interest (50%),
-Leaving Cert subject-enjoyment fit (20%), and lifestyle/pathway alignment
-(30%), per research on teen career-questionnaire best practice: measure
+(32%). The Ireland 2026/27 edition reweights this to RIASEC interest (45%),
+subject-enjoyment fit (20%), hobbies (10%), and lifestyle/pathway alignment
+(25%), per research on teen career-questionnaire best practice: measure
 enjoyment rather than self-rated ability, anchor items in the Irish school
 experience, and always surface degree, apprenticeship, and PLC routes side
 by side. Everything runs client-side — no backend, no accounts, no data
@@ -56,13 +83,14 @@ collection.
 ```
 index.html                  Page shell — market select, quiz, and results screens
 style.css                   Visual design (compass / wayfinding theme)
-app.js                       Market selection, question flow, scoring, and results rendering
+app.js                       Market selection, adaptive question flow, scoring, and results
 jobs-data.js                 30-job US dataset with RIASEC weights and metadata
 jobs-data-ie.js              28-job Ireland dataset with RIASEC weights and metadata
 jobs-data-ie2026.js          27-job Ireland 2026/27 dataset — adds subjects/pathway/CAO fields
 questions-data.js            24 RIASEC items + 6 lifestyle questions (shared: US & Ireland)
-questions-data-ie2026.js     18 Leaving Cert subject items, 5 lifestyle items, and a pathway
-                             question used only by the Ireland 2026/27 edition
+questions-data-ie2026.js     Ireland 2026/27's cycle question, Junior Cycle/Leaving Cert subject
+                             catalogs + dynamic question builder, hobbies list + RIASEC weights,
+                             the shared 5-axis lifestyle bank, and the pathway question
 ```
 
 ## Running locally
