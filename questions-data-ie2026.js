@@ -43,9 +43,9 @@ const CYCLE_QUESTION_IE2026 = [
 // Junior Cycle and Leaving Certificate — always asked (unless the
 // student isn't in school), so they're not part of the picker below.
 const CORE_SUBJECT_QUESTIONS_IE2026 = [
-  { type: "likert", subjectKeys: ["irish"], text: "How much do you enjoy Irish?" },
-  { type: "likert", subjectKeys: ["english"], text: "How much do you enjoy English?" },
-  { type: "likert", subjectKeys: ["maths"], text: "How much do you enjoy Maths?" },
+  { type: "likert", subjectKeys: ["irish"], text: "I really enjoy Irish." },
+  { type: "likert", subjectKeys: ["english"], text: "I really enjoy English." },
+  { type: "likert", subjectKeys: ["maths"], text: "I really enjoy Maths." },
 ];
 
 // Junior Cycle's 15 optional full subjects (Framework for Junior
@@ -139,11 +139,11 @@ const SUBJECT_PICKER_QUESTION_IE2026 = {
   hint: "Tick every subject that applies — Irish, English, and Maths are already covered separately.",
 };
 
-// Builds the dynamic "how much do you enjoy X?" questions for
-// exactly the subjects a student picked, plus the shared core
-// three. De-duplicates by which internal scoring keys a subject
-// maps to, so e.g. picking both French and German only produces
-// one "enjoy learning a language" question, not two identical ones.
+// Builds the dynamic "I really enjoy X" statements for exactly the
+// subjects a student picked, plus the shared core three.
+// De-duplicates by which internal scoring keys a subject maps to,
+// so e.g. picking both French and German only produces one
+// "I really enjoy learning a language" statement, not two identical ones.
 function buildSubjectQuestions(cycle, selectedIds) {
   if (cycle === "none") return [];
 
@@ -166,7 +166,7 @@ function buildSubjectQuestions(cycle, selectedIds) {
     questions.push({
       type: "likert",
       subjectKeys: entry.keys,
-      text: `How much do you enjoy ${entry.label}?`,
+      text: `I really enjoy ${entry.label}.`,
     });
   });
 
