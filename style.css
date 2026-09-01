@@ -65,7 +65,11 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 6px;
 }
+.brand:hover { color: var(--accent); }
 
 .brand-mark { color: var(--accent); display: inline-flex; }
 
@@ -80,6 +84,8 @@ body {
 @media (max-width: 640px) {
   .topbar-sub { display: none; }
 }
+
+.window-controls { display: none; }
 
 /* ---------- Layout / Screens ---------- */
 
@@ -528,4 +534,279 @@ main {
   .compass-needle, .progress-fill, .btn-primary, .likert-btn, .choice-btn {
     transition: none !important;
   }
+}
+
+/* ============================================================
+   Retro skin — "SureFind 2000"
+   A Win32 / Visual Basic 6-style desktop-app pastiche, toggled by
+   clicking the logo. Beveled buttons, system fonts, grey chrome.
+   ============================================================ */
+
+:root[data-skin="retro"] {
+  --bg: #008080;
+  --bg-deep: #008080;
+  --surface: #c0c0c0;
+  --surface-2: #d4d0c8;
+  --line: #808080;
+  --line-strong: #404040;
+  --text: #000000;
+  --muted: #222222;
+  --muted-2: #444444;
+  --accent: #000080;
+  --accent-dim: #0000a0;
+  --accent-ink: #ffffff;
+
+  --font-display: "Tahoma", "MS Sans Serif", Geneva, Arial, sans-serif;
+  --font-body: "Tahoma", "MS Sans Serif", Geneva, Arial, sans-serif;
+  --font-mono: "Courier New", monospace;
+
+  --radius: 0px;
+}
+
+:root[data-skin="retro"] * {
+  transition: none !important;
+  animation-duration: 0.01ms !important;
+}
+
+:root[data-skin="retro"] body {
+  background: #008080;
+  font-size: 13px;
+}
+
+:root[data-skin="retro"] main {
+  background: var(--surface);
+  border: 2px solid;
+  border-color: #ffffff #404040 #404040 #ffffff;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+  margin: 12px auto 40px;
+  padding: 4px clamp(14px, 5vw, 24px) 28px;
+}
+
+:root[data-skin="retro"] .topbar {
+  background: linear-gradient(90deg, #000080, #1084d0);
+  color: #ffffff;
+  max-width: none;
+  margin: 8px 8px 0;
+  padding: 4px 8px;
+  border: 2px solid;
+  border-color: #dfdfdf #404040 #404040 #dfdfdf;
+  align-items: center;
+}
+
+:root[data-skin="retro"] .brand {
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0;
+}
+:root[data-skin="retro"] .brand:hover { color: #ffe680; }
+:root[data-skin="retro"] .brand-mark { color: #ffe680; }
+:root[data-skin="retro"] #brand-label::after {
+  content: "";
+}
+:root[data-skin="retro"] .brand #brand-label {
+  color: #ffe066;
+  font-weight: 800;
+  text-shadow: 1px 1px 0 #000;
+}
+
+:root[data-skin="retro"] .topbar-sub {
+  color: #d8e8f8;
+  font-family: var(--font-mono);
+  text-transform: none;
+}
+
+:root[data-skin="retro"] .window-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+:root[data-skin="retro"] .retro-deco {
+  display: flex;
+  gap: 3px;
+}
+:root[data-skin="retro"] .retro-deco span,
+:root[data-skin="retro"] .retro-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 16px;
+  background: var(--surface);
+  border: 1px solid;
+  border-color: #ffffff #404040 #404040 #ffffff;
+  color: #000;
+  font-family: var(--font-body);
+  font-size: 11px;
+  line-height: 1;
+  cursor: default;
+  padding: 0;
+}
+:root[data-skin="retro"] .retro-close {
+  cursor: pointer;
+  font-weight: 700;
+}
+:root[data-skin="retro"] .retro-close:active {
+  border-color: #404040 #ffffff #ffffff #404040;
+}
+
+:root[data-skin="retro"] .eyebrow,
+:root[data-skin="retro"] .market-eyebrow {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  text-transform: none;
+}
+
+:root[data-skin="retro"] .hero-title,
+:root[data-skin="retro"] .results-title,
+:root[data-skin="retro"] .question-text,
+:root[data-skin="retro"] .match-title,
+:root[data-skin="retro"] .matches-heading {
+  font-family: var(--font-display);
+  color: #000080;
+  letter-spacing: 0;
+}
+
+:root[data-skin="retro"] .hero-sub,
+:root[data-skin="retro"] .hero-foot,
+:root[data-skin="retro"] .market-sub,
+:root[data-skin="retro"] .progress-label,
+:root[data-skin="retro"] .multiselect-hint,
+:root[data-skin="retro"] .site-footer p {
+  color: #222222;
+  font-family: var(--font-body);
+}
+
+:root[data-skin="retro"] .compass-ring-outer,
+:root[data-skin="retro"] .compass-ring-inner { stroke: #404040; }
+:root[data-skin="retro"] .compass-dir { fill: #000080; font-family: var(--font-mono); }
+:root[data-skin="retro"] .needle-north { fill: #000080; }
+:root[data-skin="retro"] .needle-south { fill: #808080; }
+:root[data-skin="retro"] .compass-pivot { fill: #000; }
+
+/* Beveled Win32 buttons */
+:root[data-skin="retro"] .btn-primary,
+:root[data-skin="retro"] .btn-ghost,
+:root[data-skin="retro"] .btn-market,
+:root[data-skin="retro"] .likert-btn,
+:root[data-skin="retro"] .choice-btn,
+:root[data-skin="retro"] .multiselect-btn {
+  background: var(--surface);
+  color: #000000;
+  border: 2px solid;
+  border-color: #ffffff #404040 #404040 #ffffff;
+  border-radius: 0;
+  box-shadow: none;
+  font-family: var(--font-body);
+  letter-spacing: 0;
+  text-transform: none;
+}
+:root[data-skin="retro"] .btn-primary:hover,
+:root[data-skin="retro"] .btn-ghost:hover,
+:root[data-skin="retro"] .btn-market:hover,
+:root[data-skin="retro"] .likert-btn:hover,
+:root[data-skin="retro"] .choice-btn:hover,
+:root[data-skin="retro"] .multiselect-btn:hover {
+  background: var(--surface-2);
+  transform: none;
+}
+:root[data-skin="retro"] .btn-primary:active,
+:root[data-skin="retro"] .btn-ghost:active,
+:root[data-skin="retro"] .btn-market:active,
+:root[data-skin="retro"] .likert-btn:active,
+:root[data-skin="retro"] .choice-btn:active,
+:root[data-skin="retro"] .multiselect-btn:active {
+  border-color: #404040 #ffffff #ffffff #404040;
+  transform: none;
+}
+
+:root[data-skin="retro"] .likert-btn.selected,
+:root[data-skin="retro"] .choice-btn.selected,
+:root[data-skin="retro"] .multiselect-btn.selected,
+:root[data-skin="retro"] .btn-market.selected {
+  border-color: #404040 #ffffff #ffffff #404040;
+  background: var(--surface-2);
+}
+:root[data-skin="retro"] .multiselect-btn.selected {
+  background: #000080;
+  color: #ffffff;
+}
+
+:root[data-skin="retro"] .likert-btn .dot {
+  border-radius: 0;
+  border: 1px solid #404040;
+  background: #ffffff;
+}
+:root[data-skin="retro"] .likert-btn.selected .dot {
+  background: #000080;
+  border-color: #000080;
+}
+
+:root[data-skin="retro"] .btn-primary {
+  font-weight: 700;
+}
+
+/* Sunken progress groove */
+:root[data-skin="retro"] .progress-track {
+  border-radius: 0;
+  border: 1px solid;
+  border-color: #404040 #ffffff #ffffff #404040;
+  background: #ffffff;
+  height: 16px;
+}
+:root[data-skin="retro"] .progress-fill {
+  background: repeating-linear-gradient(
+    90deg,
+    #000080,
+    #000080 6px,
+    #1084d0 6px,
+    #1084d0 10px
+  );
+}
+
+/* Etched panels */
+:root[data-skin="retro"] .match-card,
+:root[data-skin="retro"] .results-hex {
+  background: var(--surface);
+  border: 2px solid;
+  border-color: #404040 #ffffff #ffffff #404040;
+  border-radius: 0;
+  box-shadow: inset 1px 1px 0 rgba(255,255,255,0.6);
+}
+
+:root[data-skin="retro"] .match-category,
+:root[data-skin="retro"] .top-trait {
+  color: #000080;
+  font-family: var(--font-mono);
+}
+
+:root[data-skin="retro"] .tag {
+  background: #ffffff;
+  border: 1px solid;
+  border-color: #404040 #ffffff #ffffff #404040;
+  border-radius: 0;
+  color: #000;
+}
+
+:root[data-skin="retro"] .hex-grid,
+:root[data-skin="retro"] .hex-spoke { stroke: #808080; }
+:root[data-skin="retro"] .hex-data { fill: rgba(0, 0, 128, 0.22); stroke: #000080; }
+:root[data-skin="retro"] .hex-dot { fill: #000080; }
+:root[data-skin="retro"] .hex-label { fill: #222; font-family: var(--font-mono); }
+
+:root[data-skin="retro"] .multiselect-group {
+  color: #000080;
+  font-family: var(--font-mono);
+  text-transform: none;
+}
+
+:root[data-skin="retro"] .site-footer {
+  border-top: 1px solid #404040;
+}
+
+:root[data-skin="retro"] :focus-visible {
+  outline: 1px dotted #000000;
+  outline-offset: 2px;
 }
