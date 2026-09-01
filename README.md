@@ -26,7 +26,7 @@ most in-demand jobs — no sign-up, nothing stored, just your results.
      Employment), the CSO Labour Force Survey, the Morgan McKinley Ireland
      Salary Guide 2026, the Expert Group on Future Skills Needs (EGFSN), and
      sector salary guides from Excel Recruitment and Fáilte Ireland.
-   - **Ireland 2026/27** (85 jobs) — a version built for Irish secondary
+   - **Ireland 2026/27** (91 jobs) — a version built for Irish secondary
      students, adapting to the real Junior Cycle and Leaving Certificate
      subject lists and adding a hobbies signal alongside RIASEC. Compiled
      from the SOLAS National Skills Bulletin 2025 (21st edition), Ireland's
@@ -101,7 +101,7 @@ style.css                   Visual design (compass / wayfinding theme)
 app.js                       Market selection, adaptive question flow, scoring, and results
 jobs-data.js                 30-job US dataset with RIASEC weights and metadata
 jobs-data-ie.js              28-job Ireland dataset with RIASEC weights and metadata
-jobs-data-ie2026.js          85-job Ireland 2026/27 dataset across 21 sectors — adds
+jobs-data-ie2026.js          91-job Ireland 2026/27 dataset across 21 sectors — adds
                              subjects/pathway/CAO fields
 questions-data.js            24 RIASEC items + 6 lifestyle questions (shared: US & Ireland)
 questions-data-ie2026.js     Ireland 2026/27's cycle question, Junior Cycle/Leaving Cert subject
