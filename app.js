@@ -17,6 +17,7 @@
     ...CYCLE_QUESTION_IE2026,
     SUBJECT_PICKER_QUESTION_IE2026,
     ...HOBBY_QUESTION_IE2026,
+    ...SECTOR_QUESTION_IE2026,
     ...LIFESTYLE_QUESTIONS_IE2026,
     ...PATHWAY_QUESTION_IE2026,
   ];
@@ -38,7 +39,7 @@
       label: "Ireland 2026/27",
       jobs: JOBS_IE_2026,
       questions: QUESTIONS_IE2026,
-      footer: "Job data compiled from the SOLAS National Skills Bulletin 2025, Ireland's Critical Skills Occupations List (DETE, effective 13 May 2026), the EGFSN's Skills for Biopharma and Skills for Zero Carbon reports, the Fáilte Ireland Tourism Careers Research 2025 Update, the Build Up Skills Ireland 2030 report, apprenticeship.ie/National Apprenticeship Office data, 2025/2026 CAO points, and public pay scales (HSE, ASTI, An Garda Síochána). Subjects are drawn from NCCA's Junior Cycle and Leaving Certificate subject lists (2025/26); hobbies are a light extra signal, not a job filter. Matching combines Holland's RIASEC interest model with Leaving Cert/Junior Cycle subject enjoyment, your hobbies, and your preferred after-school pathway — treat your results as exploration anchors for further research with a guidance counsellor, not a verdict."
+      footer: "Job data compiled from the SOLAS National Skills Bulletin 2025, Ireland's Critical Skills Occupations List (DETE, effective 13 May 2026), the EGFSN's Skills for Biopharma and Skills for Zero Carbon reports, the Fáilte Ireland Tourism Careers Research 2025 Update, the Build Up Skills Ireland 2030 report, apprenticeship.ie/National Apprenticeship Office data, 2025/2026 CAO points, and public pay scales (HSE, ASTI, An Garda Síochána). Subjects are drawn from NCCA's Junior Cycle and Leaving Certificate subject lists (2025/26); hobbies and sector interests are light extra signals, not a strict job filter. Matching combines Holland's RIASEC interest model with Leaving Cert/Junior Cycle subject enjoyment, your hobbies, which fields genuinely interest you, and your preferred after-school pathway — treat your results as exploration anchors for further research with a guidance counsellor, not a verdict."
     }
   };
 
@@ -453,8 +454,29 @@
 
   function subjectAlignment(job, subjectProfile) {
     if (!job.subjects || !job.subjects.length) return 0.7;
-    const vals = job.subjects.map((s) => (s in subjectProfile ? subjectProfile[s] : 0.6));
+    // 0.5 (neutral) for a subject the student never rated — they either
+    // didn't pick it or it wasn't offered — rather than a lean-positive
+    // guess, so jobs resting on niche unrated subjects don't get an
+    // automatic, unearned boost over jobs the student actually rated.
+    const vals = job.subjects.map((s) => (s in subjectProfile ? subjectProfile[s] : 0.5));
     return vals.reduce((sum, v) => sum + v, 0) / vals.length;
+  }
+
+  // Sector-interest alignment — a direct signal on top of RIASEC/subject/
+  // hobby math. Several sectors (e.g. hospitality, trades, care work)
+  // share similar Realistic/Artistic/Social vectors, so a student who's
+  // never expressed interest in a sector can still cosine-match a job
+  // in it. This pulls those down (and pulls genuinely-picked sectors
+  // up) using the job's own `category` field.
+  function sectorAlignment(job) {
+    const selected = state.lifestyleAnswers.sectors || [];
+    if (!selected.length) return 0.65; // no opinion given — stay neutral
+    const selectedCategories = new Set();
+    selected.forEach((id) => {
+      const opt = SECTOR_OPTIONS_IE2026.find((o) => o.id === id);
+      if (opt) opt.categories.forEach((c) => selectedCategories.add(c));
+    });
+    return selectedCategories.has(job.category) ? 1 : 0.25;
   }
 
   // Hobby profile — a light extra signal blended alongside RIASEC
@@ -574,7 +596,13 @@
         // A neutral 0.65 keeps every job's score equally unaffected when
         // no hobbies were picked, rather than distorting the ranking.
         const hobbyScore = hobbyProfile ? cosineSim(hobbyProfile, job.riasec) : 0.65;
-        finalScore = interestScore * 0.45 + subjectScore * 0.2 + hobbyScore * 0.1 + lifestyleScore * 0.25;
+        const sectorScore = sectorAlignment(job); // 0..1
+        finalScore =
+          interestScore * 0.35 +
+          subjectScore * 0.15 +
+          hobbyScore * 0.08 +
+          sectorScore * 0.22 +
+          lifestyleScore * 0.2;
       } else {
         finalScore = interestScore * 0.68 + lifestyleScore * 0.32;
       }

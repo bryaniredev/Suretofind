@@ -280,6 +280,42 @@ const HOBBY_QUESTION_IE2026 = [
   }
 ];
 
+// Broad sector/interest-area signal, one level up from individual
+// subjects and hobbies. RIASEC and subject-enjoyment questions alone
+// can't tell a genuine interest in, say, food and hospitality apart
+// from a more generic "hands-on and a bit creative" profile that also
+// happens to fit trades, crafts, or care work — several sectors share
+// a similar Realistic/Artistic/Social mix. Without this, a job in a
+// sector the student has never shown any real interest in can still
+// rank highly on interest-vector math alone (e.g. Chef surfacing for
+// students who've never cooked). Each option maps to the job
+// `category` values it covers (see jobs-data-ie2026.js) — together
+// the 12 options cover every category in the dataset.
+const SECTOR_OPTIONS_IE2026 = [
+  { id: "food-hospitality", label: "Food, cooking & hospitality", categories: ["Hospitality & Tourism"] },
+  { id: "trades-construction", label: "Building, trades & construction", categories: ["Skilled Trades & Construction"] },
+  { id: "engineering-machines", label: "Machines, vehicles & engineering", categories: ["Engineering", "Transport & Logistics", "Green Economy"] },
+  { id: "tech-computers", label: "Computers, software & technology", categories: ["Technology & ICT"] },
+  { id: "healthcare-medicine", label: "Healthcare & medicine", categories: ["Healthcare", "Science, Pharma & MedTech"] },
+  { id: "teaching-childcare", label: "Teaching & working with children", categories: ["Education"] },
+  { id: "animals-vet", label: "Animals & veterinary care", categories: ["Veterinary & Animal Care"] },
+  { id: "nature-farming", label: "Nature, farming & the outdoors", categories: ["Agriculture & Agri-Food", "Horticulture & Landscaping", "Science & Environment"] },
+  { id: "business-money", label: "Business, money & entrepreneurship", categories: ["Business & Finance", "Property & Real Estate"] },
+  { id: "law-publicservice", label: "Law, safety & public service", categories: ["Public Sector & Law", "Politics & Public Life"] },
+  { id: "art-design", label: "Art, design & creative work", categories: ["Creative & Digital", "Design & Architecture", "Information & Culture"] },
+  { id: "beauty-fitness", label: "Hair, beauty, fitness & personal care", categories: ["Personal Services & Retail"] },
+];
+
+const SECTOR_QUESTION_IE2026 = [
+  {
+    type: "multiselect",
+    key: "sectors",
+    text: "Which of these fields genuinely interest you?",
+    hint: "Pick every field you'd actually consider working in — this helps rule out ones you're just not drawn to, even when a job's other traits happen to line up with you.",
+    options: SECTOR_OPTIONS_IE2026,
+  }
+];
+
 // Approximate RIASEC signature per hobby (0–1 per trait, missing
 // traits treated as 0), used to nudge — not replace — the interest
 // profile computed from the RIASEC questions.
