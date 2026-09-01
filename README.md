@@ -77,7 +77,19 @@ each student:
    coding, part-time work, volunteering, debating, cooking, fashion,
    outdoors, animals, strategy games, and more), used as a light extra
    signal on top of your RIASEC interest score.
-5. The usual lifestyle questions, plus an after-school pathway preference
+5. **Pick the fields that genuinely interest you** — a 12-option multi-select
+   spanning every sector in the dataset (food & hospitality; trades &
+   construction; engineering, vehicles & machines; tech; healthcare;
+   teaching & childcare; animals & veterinary care; farming & the outdoors;
+   business & money; law & public service; art & design; and beauty/
+   fitness/personal care). This exists because RIASEC and subject-enjoyment
+   scores alone can't tell a genuine interest in, say, cooking apart from a
+   more generic "hands-on and a bit creative" profile that also happens to
+   fit trades, crafts, or care work — several sectors share a similar
+   Realistic/Artistic/Social mix, and without a direct check, a job in a
+   sector you've never shown interest in could still rank highly on
+   interest-vector math alone.
+6. The usual lifestyle questions, plus an after-school pathway preference
    (CAO degree / apprenticeship / PLC / open to any). A job needing no
    formal course at all (e.g. retail assistant, cabin crew) is treated as
    compatible with any of these, since it doesn't conflict with a
@@ -85,13 +97,17 @@ each student:
 
 Matching for the US and Ireland editions combines a cosine-similarity score
 across the six RIASEC dimensions (68%) with a lifestyle-alignment score
-(32%). The Ireland 2026/27 edition reweights this to RIASEC interest (45%),
-subject-enjoyment fit (20%), hobbies (10%), and lifestyle/pathway alignment
-(25%), per research on teen career-questionnaire best practice: measure
-enjoyment rather than self-rated ability, anchor items in the Irish school
-experience, and always surface degree, apprenticeship, and PLC routes side
-by side. Everything runs client-side — no backend, no accounts, no data
-collection.
+(32%). The Ireland 2026/27 edition reweights this to RIASEC interest (35%),
+subject-enjoyment fit (15%), hobbies (8%), sector-interest fit (22%), and
+lifestyle/pathway alignment (20%), per research on teen career-
+questionnaire best practice: measure enjoyment rather than self-rated
+ability, anchor items in the Irish school experience, always surface
+degree, apprenticeship, and PLC routes side by side, and don't let a
+generic interest profile alone stand in for genuine interest in a specific
+field. A job in a sector you didn't pick is scored down, not excluded
+outright, so a strong RIASEC/subject match can still surface it lower in
+the list rather than disappearing entirely. Everything runs client-side —
+no backend, no accounts, no data collection.
 
 ## Project structure
 
@@ -106,7 +122,8 @@ jobs-data-ie2026.js          91-job Ireland 2026/27 dataset across 21 sectors �
 questions-data.js            24 RIASEC items + 6 lifestyle questions (shared: US & Ireland)
 questions-data-ie2026.js     Ireland 2026/27's cycle question, Junior Cycle/Leaving Cert subject
                              catalogs + dynamic question builder, hobbies list + RIASEC weights,
-                             the shared 5-axis lifestyle bank, and the pathway question
+                             the sector-interest question + category map, the shared 5-axis
+                             lifestyle bank, and the pathway question
 ```
 
 ## Running locally
