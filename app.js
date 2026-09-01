@@ -345,6 +345,7 @@
     apprenticeship: "Earn-while-you-learn apprenticeship",
     plc: "PLC / QQI course",
     multiple: "Multiple routes in — degree, apprenticeship, or PLC",
+    none: "Direct entry — no formal course required",
   };
 
   function computeRiasecProfile() {
@@ -434,7 +435,16 @@
     // Level 8 award as a CAO degree.
     totalWeight += 1.4;
     if (state.market === "ie2026") {
-      if (a.pathway === "open" || job.pathway === "multiple" || a.pathway === job.pathway) {
+      // A "none" pathway (direct entry, no formal course) doesn't
+      // conflict with any after-school plan — someone could work that
+      // job alongside or before a degree/apprenticeship/PLC just as
+      // easily as a "multiple"-route job.
+      if (
+        a.pathway === "open" ||
+        job.pathway === "multiple" ||
+        job.pathway === "none" ||
+        a.pathway === job.pathway
+      ) {
         alignedWeight += 1.4;
       } else {
         alignedWeight += 0.5;

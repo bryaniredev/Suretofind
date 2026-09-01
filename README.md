@@ -26,18 +26,29 @@ most in-demand jobs — no sign-up, nothing stored, just your results.
      Employment), the CSO Labour Force Survey, the Morgan McKinley Ireland
      Salary Guide 2026, the Expert Group on Future Skills Needs (EGFSN), and
      sector salary guides from Excel Recruitment and Fáilte Ireland.
-   - **Ireland 2026/27** (27 jobs) — a version built for Irish secondary
+   - **Ireland 2026/27** (81 jobs) — a version built for Irish secondary
      students, adapting to the real Junior Cycle and Leaving Certificate
      subject lists and adding a hobbies signal alongside RIASEC. Compiled
-     from the SOLAS National Skills Bulletin 2025, Ireland's Critical Skills
-     Occupations List (CSOL, DETE, effective 13 May 2026), the EGFSN's
-     *Skills for Biopharma* and *Skills for Zero Carbon* reports, the Fáilte
-     Ireland Tourism Careers Research 2025 Update, the Build Up Skills
-     Ireland 2030 report, apprenticeship.ie / the National Apprenticeship
-     Office, 2025/2026 CAO points, and public pay scales (HSE, ASTI, An
-     Garda Síochána). Every job lists its CAO points and/or apprenticeship
-     route, NFQ level, and the Leaving Cert/Junior Cycle subjects it draws
-     on, so results double as subject-choice guidance.
+     from the SOLAS National Skills Bulletin 2025 (21st edition), Ireland's
+     Critical Skills Occupations List (CSOL, DETE, effective 13 May 2026),
+     the EGFSN's *Skills for Biopharma* and *Skills for Zero Carbon*
+     reports, the Fáilte Ireland Tourism Careers Research 2025 Update, the
+     Build Up Skills Ireland 2030 report, apprenticeship.ie / the National
+     Apprenticeship Office (including SIMI motor apprenticeships), the
+     Irish Aviation Authority Student Controller Programme, the
+     HSE/Department of Health Consolidated Salary Scales (effective 1
+     August 2025, with a 1 February 2026 uplift), 2025/2026 CAO points, WRC-
+     confirmed Employment Regulation Orders (childcare, security), and
+     public pay scales (HSE, ASTI, An Garda Síochána, Met Éireann, Defence
+     Forces, Irish Rail). Private-sector figures also draw on Morgan
+     McKinley 2026, Glassdoor.ie, Indeed.ie, PayScale, and ERI SalaryExpert
+     — these vary between providers and are indicative, Dublin-weighted
+     ranges. Spans 18 sectors from Technology & ICT and Healthcare through
+     Skilled Trades, Transport & Logistics, Veterinary & Animal Care,
+     Creative & Digital, Design & Architecture, and Personal Services &
+     Retail. Every job lists its CAO points and/or apprenticeship route,
+     NFQ level, and the Leaving Cert/Junior Cycle subjects it draws on, so
+     results double as subject-choice guidance.
 5. You get your top 6 matches, each with salary range, education/pathway
    path, growth outlook, and key skills.
 
@@ -66,7 +77,10 @@ each student:
    outdoors, animals, strategy games, and more), used as a light extra
    signal on top of your RIASEC interest score.
 5. The usual lifestyle questions, plus an after-school pathway preference
-   (CAO degree / apprenticeship / PLC / open to any).
+   (CAO degree / apprenticeship / PLC / open to any). A job needing no
+   formal course at all (e.g. retail assistant, cabin crew) is treated as
+   compatible with any of these, since it doesn't conflict with a
+   student's post-school plans either way.
 
 Matching for the US and Ireland editions combines a cosine-similarity score
 across the six RIASEC dimensions (68%) with a lifestyle-alignment score
@@ -86,7 +100,8 @@ style.css                   Visual design (compass / wayfinding theme)
 app.js                       Market selection, adaptive question flow, scoring, and results
 jobs-data.js                 30-job US dataset with RIASEC weights and metadata
 jobs-data-ie.js              28-job Ireland dataset with RIASEC weights and metadata
-jobs-data-ie2026.js          27-job Ireland 2026/27 dataset — adds subjects/pathway/CAO fields
+jobs-data-ie2026.js          81-job Ireland 2026/27 dataset across 18 sectors — adds
+                             subjects/pathway/CAO fields
 questions-data.js            24 RIASEC items + 6 lifestyle questions (shared: US & Ireland)
 questions-data-ie2026.js     Ireland 2026/27's cycle question, Junior Cycle/Leaving Cert subject
                              catalogs + dynamic question builder, hobbies list + RIASEC weights,
@@ -115,7 +130,9 @@ relevant dataset file:
   and the Morgan McKinley Ireland Salary Guide (published annually).
 - **Ireland 2026/27** (`jobs-data-ie2026.js`): the SOLAS National Skills
   Bulletin (published each October), the CSOL (reviewed roughly twice yearly
-  by DETE), CAO points (each August), and apprenticeship.ie.
+  by DETE), CAO points (each August, verify at CAO.ie), apprenticeship.ie,
+  and Employment Regulation Orders (re-check whenever the WRC confirms a
+  new one — these directly set pay floors for childcare and security roles).
 
 ## Disclaimer
 
@@ -124,3 +141,5 @@ or guidance-counselling advice. Salary and CAO-points figures are national
 estimates/indicative snapshots for the selected market, vary by region,
 employer, and year, and — for the Ireland 2026/27 edition especially — should
 be treated as an exploration anchor to research further, not a verdict.
+Creative and performance-based salary figures in particular reflect small,
+highly variable samples and should not be read as reliable income guarantees.
