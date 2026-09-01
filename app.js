@@ -71,12 +71,67 @@
     topTraitLabel: document.getElementById("top-trait-label"),
     matchesHeading: document.getElementById("matches-heading"),
     footerDisclaimer: document.getElementById("footer-disclaimer"),
+    brandToggle: document.getElementById("brand-toggle"),
+    brandLabel: document.getElementById("brand-label"),
+    retroCloseBtn: document.getElementById("retro-close-btn"),
   };
 
   function showScreen(name) {
     Object.values(screens).forEach((s) => s.classList.remove("active"));
     screens[name].classList.add("active");
   }
+
+  // ---------- Retro "SureFind 2000" skin toggle ----------
+
+  function applyRetroSkin(on) {
+    document.documentElement.setAttribute("data-skin", on ? "retro" : "default");
+    if (els.brandLabel) {
+      els.brandLabel.textContent = on ? "SureFind 2000" : "Suretofind";
+    }
+    if (els.brandToggle) {
+      els.brandToggle.setAttribute("aria-pressed", on ? "true" : "false");
+      els.brandToggle.setAttribute(
+        "aria-label",
+        on ? "Toggle off SureFind 2000 style" : "Toggle retro SureFind 2000 style"
+      );
+    }
+    try {
+      localStorage.setItem("suretofindRetroSkin", on ? "1" : "0");
+    } catch (e) {
+      /* localStorage unavailable — skin still applies for this visit */
+    }
+  }
+
+  function toggleRetroSkin() {
+    const isRetro = document.documentElement.getAttribute("data-skin") === "retro";
+    applyRetroSkin(!isRetro);
+  }
+
+  if (els.brandToggle) {
+    els.brandToggle.addEventListener("click", toggleRetroSkin);
+    els.brandToggle.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggleRetroSkin();
+      }
+    });
+  }
+  if (els.retroCloseBtn) {
+    els.retroCloseBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      applyRetroSkin(false);
+    });
+  }
+
+  (function initRetroSkin() {
+    let saved = null;
+    try {
+      saved = localStorage.getItem("suretofindRetroSkin");
+    } catch (e) {
+      /* ignore */
+    }
+    if (saved === "1") applyRetroSkin(true);
+  })();
 
   // ---------- Navigation ----------
 
