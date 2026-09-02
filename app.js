@@ -305,27 +305,47 @@
 
   // Side effects that run right after a choice question is answered.
   // Ireland 2026/27's "cycle" question controls whether the subject
-  // picker even appears next.
+  // picker even appears next; its "pathway" question controls whether
+  // the postgraduate-willingness follow-up appears next.
   function handleAnswered(q) {
-    if (state.market !== "ie2026" || q.key !== "cycle") return;
+    if (state.market !== "ie2026") return;
 
-    const cycle = state.lifestyleAnswers.cycle;
-    const pickerIndex = state.index + 1;
-    const hasPicker = state.questions[pickerIndex] === SUBJECT_PICKER_QUESTION_IE2026;
+    if (q.key === "cycle") {
+      const cycle = state.lifestyleAnswers.cycle;
+      const pickerIndex = state.index + 1;
+      const hasPicker = state.questions[pickerIndex] === SUBJECT_PICKER_QUESTION_IE2026;
 
-    if (cycle === "none") {
-      if (hasPicker) {
-        state.questions.splice(pickerIndex, 1);
+      if (cycle === "none") {
+        if (hasPicker) {
+          state.questions.splice(pickerIndex, 1);
+          state.total -= 1;
+        }
+        if (state.insertedSubjectCount > 0) {
+          state.questions.splice(pickerIndex, state.insertedSubjectCount);
+          state.total -= state.insertedSubjectCount;
+          state.insertedSubjectCount = 0;
+        }
+      } else if (!hasPicker) {
+        state.questions.splice(pickerIndex, 0, SUBJECT_PICKER_QUESTION_IE2026);
+        state.total += 1;
+      }
+      return;
+    }
+
+    if (q.key === "pathway") {
+      const pathwayVal = state.lifestyleAnswers.pathway;
+      const postgradIndex = state.index + 1;
+      const hasPostgradQ = state.questions[postgradIndex] === POSTGRAD_QUESTION_IE2026;
+
+      if (pathwayVal === "degree") {
+        if (!hasPostgradQ) {
+          state.questions.splice(postgradIndex, 0, POSTGRAD_QUESTION_IE2026);
+          state.total += 1;
+        }
+      } else if (hasPostgradQ) {
+        state.questions.splice(postgradIndex, 1);
         state.total -= 1;
       }
-      if (state.insertedSubjectCount > 0) {
-        state.questions.splice(pickerIndex, state.insertedSubjectCount);
-        state.total -= state.insertedSubjectCount;
-        state.insertedSubjectCount = 0;
-      }
-    } else if (!hasPicker) {
-      state.questions.splice(pickerIndex, 0, SUBJECT_PICKER_QUESTION_IE2026);
-      state.total += 1;
     }
   }
 
@@ -433,6 +453,29 @@
     return dot / (Math.sqrt(magU) * Math.sqrt(magJ));
   }
 
+  // Cosine similarity alone only measures direction — a mildly
+  // investigative student and a strongly investigative student can
+  // cosine-match a highly-investigative job almost identically, as long
+  // as investigative is each of their top trait. That mattered less with
+  // a small job set, but with 90+ jobs many now share a similar RIASEC
+  // *direction* within a sector while differing in *intensity* (e.g. a
+  // Data Annotator's fairly flat profile vs an Actuary's sharply-peaked
+  // one). Blending in a normalized-Euclidean term rewards students whose
+  // answers were genuinely strong on the traits a job actually demands,
+  // not just pointed the same way.
+  function combinedRiasecScore(u, j) {
+    const cos = cosineSim(u, j);
+    let sumSq = 0;
+    TRAITS.forEach((t) => {
+      const d = u[t] - j[t];
+      sumSq += d * d;
+    });
+    const dist = Math.sqrt(sumSq);
+    const maxDist = Math.sqrt(TRAITS.length); // every trait in [0,1], so sqrt(6) is the max possible distance
+    const euclidSim = 1 - dist / maxDist;
+    return cos * 0.7 + euclidSim * 0.3;
+  }
+
   // Subject-enjoyment profile — built from whichever dynamically-generated
   // subject questions ended up in state.questions (identified generically
   // by the presence of q.subjectKeys, so this doesn't need to know which
@@ -526,6 +569,28 @@
       } else {
         alignedWeight += 0.5;
       }
+
+      // Postgraduate willingness — only relevant for the dataset's
+      // graduate-tier roles (Doctor, Dentist, Pharmacist, Psychologist,
+      // Architect, Solicitor, Secondary Teacher, Librarian). Without
+      // this, those score as achievable as any standard bachelor's
+      // degree to a student who specifically doesn't want years of
+      // postgrad study on top. Only asked when "degree" was chosen, so
+      // a.postgradOpen is undefined for anyone who picked apprenticeship,
+      // PLC, or "open" — treated as neutral rather than penalized, since
+      // we simply never asked.
+      if (job.degree === "graduate") {
+        totalWeight += 1.0;
+        if (a.postgradOpen === "open") {
+          alignedWeight += 1.0;
+        } else if (a.postgradOpen === "unsure") {
+          alignedWeight += 0.6;
+        } else if (a.postgradOpen === "undergradOnly") {
+          alignedWeight += 0.15;
+        } else {
+          alignedWeight += 0.6;
+        }
+      }
     } else {
       // Penalize if the job needs more schooling than the user wants
       const userDeg = DEGREE_RANK[a.degree];
@@ -588,21 +653,21 @@
     const hobbyProfile = isIe2026 ? computeHobbyProfile() : null;
 
     const scored = market.jobs.map((job) => {
-      const interestScore = cosineSim(profile, job.riasec); // 0..1
+      const interestScore = combinedRiasecScore(profile, job.riasec); // 0..1
       const lifestyleScore = lifestyleAlignment(job); // 0..1
       let finalScore;
       if (subjectProfile) {
         const subjectScore = subjectAlignment(job, subjectProfile); // 0..1
         // A neutral 0.65 keeps every job's score equally unaffected when
         // no hobbies were picked, rather than distorting the ranking.
-        const hobbyScore = hobbyProfile ? cosineSim(hobbyProfile, job.riasec) : 0.65;
+        const hobbyScore = hobbyProfile ? combinedRiasecScore(hobbyProfile, job.riasec) : 0.65;
         const sectorScore = sectorAlignment(job); // 0..1
         finalScore =
-          interestScore * 0.35 +
-          subjectScore * 0.15 +
+          interestScore * 0.33 +
+          subjectScore * 0.17 +
           hobbyScore * 0.08 +
-          sectorScore * 0.22 +
-          lifestyleScore * 0.2;
+          sectorScore * 0.2 +
+          lifestyleScore * 0.22;
       } else {
         finalScore = interestScore * 0.68 + lifestyleScore * 0.32;
       }

@@ -243,6 +243,25 @@ const PATHWAY_QUESTION_IE2026 = [
   }
 ];
 
+// Follow-up spliced in only when "A CAO / third-level degree" is chosen
+// above (see handleAnswered() in app.js). A plain "degree" pathway answer
+// doesn't distinguish a standard 3–4 year bachelor's (e.g. Software
+// Developer) from a role needing years of postgraduate study or
+// professional training on top (Doctor, Dentist, Pharmacist, Psychologist,
+// Architect, Solicitor, Secondary Teacher, Librarian — the dataset's
+// job.degree: "graduate" roles) — without this, those score as if
+// equally achievable to a student who only wants an undergrad degree.
+const POSTGRAD_QUESTION_IE2026 = {
+  type: "choice",
+  key: "postgradOpen",
+  text: "Some careers — like medicine, law, or teaching — need more than an undergrad degree: extra years of postgraduate study or professional training afterwards. How do you feel about that?",
+  options: [
+    { label: "I'm open to postgraduate study if a career needs it", value: "open" },
+    { label: "I'd rather stop after my undergraduate degree", value: "undergradOnly" },
+    { label: "Not sure yet", value: "unsure" },
+  ]
+};
+
 // Activities popular with Irish teens (Sport Ireland's Irish Sports
 // Monitor 2025 records record-high 49% sport participation driven by
 // teens/young adults; the GAA's 2025 Gaelic Games Youth Participation

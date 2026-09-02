@@ -93,21 +93,38 @@ each student:
    (CAO degree / apprenticeship / PLC / open to any). A job needing no
    formal course at all (e.g. retail assistant, cabin crew) is treated as
    compatible with any of these, since it doesn't conflict with a
-   student's post-school plans either way.
+   student's post-school plans either way. Choosing "CAO degree"
+   specifically prompts one more follow-up: whether you're open to
+   postgraduate study on top of an undergrad degree. Several careers in
+   the dataset (Doctor, Dentist, Pharmacist, Psychologist, Architect,
+   Solicitor, Secondary Teacher, Librarian) need years of training beyond
+   a standard bachelor's — without asking this, they'd score as equally
+   achievable as any 3–4 year degree to a student who'd rather not commit
+   to that.
 
-Matching for the US and Ireland editions combines a cosine-similarity score
+Interest matching (all editions) blends two signals per RIASEC dimension:
+direction (cosine similarity — do your answers *point* the same way as a
+job's profile) and intensity (a normalized-Euclidean term — are your
+answers *as strong* as what the job actually demands). Cosine alone can't
+tell a mildly-investigative student from a strongly-investigative one
+apart if investigative is each of their top trait; blending in intensity
+matters more now that the Ireland 2026/27 edition's 91 jobs often share a
+similar RIASEC direction within a sector while differing in how strongly
+they lean into it.
+
+Matching for the US and Ireland editions combines this interest score
 across the six RIASEC dimensions (68%) with a lifestyle-alignment score
-(32%). The Ireland 2026/27 edition reweights this to RIASEC interest (35%),
-subject-enjoyment fit (15%), hobbies (8%), sector-interest fit (22%), and
-lifestyle/pathway alignment (20%), per research on teen career-
-questionnaire best practice: measure enjoyment rather than self-rated
-ability, anchor items in the Irish school experience, always surface
-degree, apprenticeship, and PLC routes side by side, and don't let a
-generic interest profile alone stand in for genuine interest in a specific
-field. A job in a sector you didn't pick is scored down, not excluded
-outright, so a strong RIASEC/subject match can still surface it lower in
-the list rather than disappearing entirely. Everything runs client-side —
-no backend, no accounts, no data collection.
+(32%). The Ireland 2026/27 edition reweights this to RIASEC interest (33%),
+subject-enjoyment fit (17%), hobbies (8%), sector-interest fit (20%), and
+lifestyle/pathway alignment (22%, including the postgraduate-fit check
+above), per research on teen career-questionnaire best practice: measure
+enjoyment rather than self-rated ability, anchor items in the Irish school
+experience, always surface degree, apprenticeship, and PLC routes side by
+side, and don't let a generic interest profile alone stand in for genuine
+interest in a specific field. A job in a sector you didn't pick is scored
+down, not excluded outright, so a strong RIASEC/subject match can still
+surface it lower in the list rather than disappearing entirely. Everything
+runs client-side — no backend, no accounts, no data collection.
 
 ## Project structure
 
